@@ -1,0 +1,92 @@
+#include "Configure.h"
+#include "Dictionary.h"
+#include "Index.h"
+
+using std::string;
+
+int main2()
+{
+	Configure* configure=Configure::getInstance();
+	string configPath="./Conf/main.conf";
+	configure->addConfigFrom(configPath);
+	string source1=configure->getPathFor("source1");
+	string source2=configure->getPathFor("source2");
+	string source3=configure->getPathFor("source3");
+	string source4=configure->getPathFor("source4");
+	string diction=configure->getPathFor("diction");
+
+	Dictionary* dictionary=Dictionary::getInstance();
+	dictionary->addSourceNFrom(source1);
+	dictionary->addSourceNFrom(source2);
+	dictionary->addSourceNFrom(source3);
+	dictionary->addSourceXFrom(source4);
+	dictionary->makeDictionary();
+	dictionary->putDictionaryTo(diction);
+
+	Index* index=Index::getInstance();
+	index->addIndexFrom(*dictionary);
+
+//²âÊÔ1
+/*
+	string sourceN=configure->getPathFor("sourceN");
+	string sourceX=configure->getPathFor("sourceX");
+	dictionary->putSourceNTo(sourceN);
+	dictionary->putSourceXTo(sourceX);
+*/
+//²âÊÔ2
+/*
+	string indexA=configure->getPathFor("indexA");
+	string indexB=configure->getPathFor("indexB");
+	string indexC=configure->getPathFor("indexC");
+	string indexD=configure->getPathFor("indexD");
+	string indexE=configure->getPathFor("indexE");
+	string indexF=configure->getPathFor("indexF");
+	string indexG=configure->getPathFor("indexG");
+	string indexH=configure->getPathFor("indexH");
+	string indexI=configure->getPathFor("indexI");
+	string indexJ=configure->getPathFor("indexJ");
+	string indexK=configure->getPathFor("indexK");
+	string indexL=configure->getPathFor("indexL");
+	string indexM=configure->getPathFor("indexM");
+	string indexN=configure->getPathFor("indexN");
+	string indexO=configure->getPathFor("indexO");
+	string indexP=configure->getPathFor("indexP");
+	string indexQ=configure->getPathFor("indexQ");
+	string indexR=configure->getPathFor("indexR");
+	string indexS=configure->getPathFor("indexS");
+	string indexT=configure->getPathFor("indexT");
+	string indexU=configure->getPathFor("indexU");
+	string indexV=configure->getPathFor("indexV");
+	string indexW=configure->getPathFor("indexW");
+	string indexX=configure->getPathFor("indexX");
+	string indexY=configure->getPathFor("indexY");
+	string indexZ=configure->getPathFor("indexZ");	
+	index->putIndexTo(indexA,'a');
+	index->putIndexTo(indexB,'b');
+	index->putIndexTo(indexC,'c');
+	index->putIndexTo(indexD,'d');
+	index->putIndexTo(indexE,'e');
+	index->putIndexTo(indexF,'f');
+	index->putIndexTo(indexG,'g');
+	index->putIndexTo(indexH,'h');
+	index->putIndexTo(indexI,'i');
+	index->putIndexTo(indexJ,'j');
+	index->putIndexTo(indexK,'k');
+	index->putIndexTo(indexL,'l');
+	index->putIndexTo(indexM,'m');
+	index->putIndexTo(indexN,'n');
+	index->putIndexTo(indexO,'o');
+	index->putIndexTo(indexP,'p');
+	index->putIndexTo(indexQ,'q');
+	index->putIndexTo(indexR,'r');
+	index->putIndexTo(indexS,'s');
+	index->putIndexTo(indexT,'t');
+	index->putIndexTo(indexU,'u');
+	index->putIndexTo(indexV,'v');
+	index->putIndexTo(indexW,'w');
+	index->putIndexTo(indexX,'x');
+	index->putIndexTo(indexY,'y');
+	index->putIndexTo(indexZ,'z');
+*/
+	return 0;
+}
