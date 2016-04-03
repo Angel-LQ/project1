@@ -1,5 +1,6 @@
 #include "Configure.h"
 #include <cstdlib>
+#include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -23,7 +24,7 @@ string Configure::getPathFor(const string &name)
 	auto it=_configure_map.find(name);
 	if(_configure_map.end()==it)
 	{
-		cout<<"getPathFor()"<<endl;
+		perror("getPathFor()");
 		return "";
 	}
 	return it->second;
@@ -45,7 +46,7 @@ int Configure::addConfigFrom(const string &path)
 	ifstream ifs(path);
 	if(!ifs.good())
 	{	
-		cout<<"!ifs.good()"<<endl;
+		perror("!ifs.good()");
 		return -1;
 	}
 	string file;

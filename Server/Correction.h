@@ -12,7 +12,6 @@ using std::map;
 using std::set;
 
 class Dictionary;
-class Index;
 
 struct Result
 {
@@ -41,7 +40,7 @@ struct Compare
 class Correction
 {
 public:
-	static Correction* getInstance(Dictionary &diction,Index &index);
+	static Correction* getInstance(Dictionary &diction);
 	string recommend(const string &word);
 private:
 	Correction(vector<pair<string,int>> &diction,map<char,set<int>> &index);

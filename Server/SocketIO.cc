@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 
-#define BUFFSIZE 64
+#define BUFFSIZE 1024
 
 SocketIO* SocketIO::getInstance(int fd)
 {

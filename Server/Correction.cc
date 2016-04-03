@@ -1,6 +1,5 @@
 #include "Correction.h"
 #include "Dictionary.h"
-#include "Index.h"
 #include <cstdlib>
 #include <string>
 #include <queue>
@@ -11,7 +10,6 @@
 
 using std::endl;
 using std::cout;
-
 using std::priority_queue;
 using std::vector;
 
@@ -58,7 +56,7 @@ string Correction::recommend(const string &word)
 	for(auto it=totalIndex.begin();it!=totalIndex.end();++it)
 	{
 		dist=MinimumEditDistance(_diction[*it].first,word);
-		if(dist<3)
+		if(dist<2)
 		{	
 			Result res;
 			res._word=_diction[*it].first;
@@ -74,10 +72,10 @@ string Correction::recommend(const string &word)
 }
 
 
-Correction* Correction::getInstance(Dictionary &diction,Index &index)
+Correction* Correction::getInstance(Dictionary &diction)
 {
 	if(!_correction)
-		_correction=new Correction(diction._diction_vec,index._idx_map);
+		_correction=new Correction(diction._diction_vec,diction._index_map);
 	return _correction;
 }
 

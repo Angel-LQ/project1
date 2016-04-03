@@ -18,13 +18,9 @@ string Cache::find(const string &word)
 	auto it=_cache_map.find(word);
 	if(it==_cache_map.end())
 	{
-		cout<<"Not find from cache."<<endl;
 		string retword=_correction.recommend(word);
 		if(retword=="")
-		{
-			cout<<"Not find from dictionary."<<endl;
-			retword==word;
-		}
+			retword=word;
 		_cache_map.insert(pair<string,string>(word,retword));
 		_cache_map.insert(pair<string,string>(retword,retword));
 		return retword;

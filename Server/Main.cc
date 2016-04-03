@@ -1,6 +1,5 @@
 #include "Configure.h"
 #include "Dictionary.h"
-#include "Index.h"
 #include "Correction.h"
 #include "Cache.h"
 #include "InetAddress.h"
@@ -21,32 +20,23 @@ using std::atoi;
 
 int main()
 {
-	string configPath="./Conf/main.conf";
+	string configPath="./Conf/Server.conf";
 	Configure* configure=Configure::getInstance(configPath);
-	string source1=configure->getPathFor("source1");
-	string source2=configure->getPathFor("source2");
-	string source3=configure->getPathFor("source3");
-	string source4=configure->getPathFor("source4");
 	string diction=configure->getPathFor("diction");
 	string port=configure->getPathFor("port");
 	string num=configure->getPathFor("num");
 
-	Dictionary* dictionary=Dictionary::getInstance();
-	dictionary->addSourceNFrom(source1);
-	dictionary->addSourceNFrom(source2);
-	dictionary->addSourceNFrom(source3);
-	dictionary->addSourceXFrom(source4);
-	dictionary->makeDictionary();
-	dictionary->putDictionaryTo(diction);
+	Dictionary* dictionary=Dictionary::getInstance(diction);
 
-	Index* index=Index::getInstance(*dictionary);
-
-	Correction* correction=Correction::getInstance(*dictionary,*index);
+	Correction* correction=Correction::getInstance(*dictionary);
 	Cache* cache=Cache::getInstance(*correction);
 
 	InetAddress inetAddress(atoi(port.c_str()));
 	Socket* socket=Socket::getInstance();
 	socket->get(inetAddress,atoi(num.c_str()));
+
+	cout<<"Welcome!"<<endl;
+
 	int fd=socket->acceptFor();
 	SocketIO* socketIO=SocketIO::getInstance(fd);
 
@@ -58,5 +48,6 @@ int main()
 		dest=cache->find(src);
 		socketIO->writeString(dest);
 	}
+
 	return 0;
 }
