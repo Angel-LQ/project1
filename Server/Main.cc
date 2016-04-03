@@ -1,3 +1,4 @@
+#include "MutexLock.h"
 #include "Configure.h"
 #include "Dictionary.h"
 #include "Cache.h"
@@ -20,14 +21,15 @@ using std::atoi;
 
 int main()
 {
+	MutexLock mutexLock;
 	string configPath="./Conf/Server.conf";
-	Configure* configure=Configure::getInstance(configPath);
+	Configure* configure=Configure::getInstance(configPath,mutexLock);
 	string dictionaryPath=configure->getPathFor("dictionaryPath"); 
 	string port=configure->getPathFor("port");
 	string number=configure->getPathFor("number");
 
-	Dictionary* dictionary=Dictionary::getInstance(dictionaryPath);
-	Cache* cache=Cache::getInstance();
+	Dictionary* dictionary=Dictionary::getInstance(dictionaryPath,mutexLock);
+	Cache* cache=Cache::getInstance(mutexLock);
 	Task task=Task(*dictionary,*cache);
 
 	InetAddress inetAddress(atoi(port.c_str()));

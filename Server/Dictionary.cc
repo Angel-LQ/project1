@@ -1,7 +1,8 @@
 #include "Dictionary.h"
-#include <fstream>
-#include <cstdlib>
+#include "MutexLock.h"
 #include <cstdio>
+#include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <cctype>
 #include <string>
@@ -47,10 +48,14 @@ int MinimumEditDistance(const string &dest,const string &src)
 	return Edit[slen-1][dlen-1];
 }
 
-Dictionary* Dictionary::getInstance(const string &dictionaryPath)
+Dictionary* Dictionary::getInstance(const string &dictionaryPath,MutexLock &mutexLock)
 {
 	if(!_dictionary)
-		_dictionary=new Dictionary(dictionaryPath);
+	{
+		MutexLockGuard mlg(mutexLock);
+		if(!_dictionary)
+			_dictionary=new Dictionary(dictionaryPath);
+	}
 	return _dictionary;
 }
 

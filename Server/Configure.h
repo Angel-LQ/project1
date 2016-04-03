@@ -6,10 +6,12 @@
 using std::map;
 using std::string;
 
+class MutexLock;
+
 class Configure
 {
 public:
-	static Configure* getInstance(const string &path);
+	static Configure* getInstance(const string &path,MutexLock &mutexLock);
 	string getPathFor(const string &name);
 private:
 	Configure(const string &path);

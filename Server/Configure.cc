@@ -1,6 +1,7 @@
 #include "Configure.h"
-#include <cstdlib>
+#include "MutexLock.h"
 #include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -12,10 +13,14 @@ using std::endl;
 using std::map;
 using std::pair;
 
-Configure* Configure::getInstance(const string &path)
+Configure* Configure::getInstance(const string &path,MutexLock &mutexLock)
 {
 	if(!_config)
-		_config=new Configure(path);
+	{
+		MutexLockGuard mlg(mutexLock);
+		if(!_config)
+			_config=new Configure(path);
+	}
 	return _config;
 }
 

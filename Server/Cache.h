@@ -7,10 +7,12 @@ using std::map;
 using std::string;
 using std::pair;
 
+class MutexLock;
+
 class Cache
 {
 public:
-	static Cache* getInstance();
+	static Cache* getInstance(MutexLock &mutexLock);
 	string lookUp(const string &word);
 	void add(const pair<string,string> &words);
 private:

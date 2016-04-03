@@ -1,14 +1,19 @@
 #include "Cache.h"
-#include "cstdlib"
-#include "iostream"
+#include "MutexLock.h"
+#include <cstdlib>
+#include <iostream>
 
 using std::cout;
 using std::endl;
 
-Cache* Cache::getInstance()
+Cache* Cache::getInstance(MutexLock &mutexLock)
 {
 	if(!_cache)
-		_cache=new Cache();
+	{
+		MutexLockGuard mlg(mutexLock);
+		if(!_cache)
+			_cache=new Cache();
+	}
 	return _cache;
 }
 

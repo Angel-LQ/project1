@@ -35,10 +35,12 @@ struct Compare
 	}
 };
 
+class MutexLock;
+
 class Dictionary
 {
 public:
-	static Dictionary* getInstance(const string &dictionaryPath);
+	static Dictionary* getInstance(const string &dictionaryPath,MutexLock &mutexLock);
 	string lookUp(const string &word);
 private:
 	Dictionary(const string &dictionaryPath);
