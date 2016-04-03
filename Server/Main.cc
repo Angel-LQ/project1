@@ -1,7 +1,7 @@
 #include "Configure.h"
 #include "Dictionary.h"
-#include "Correction.h"
 #include "Cache.h"
+#include "Task.h"
 #include "InetAddress.h"
 #include "Socket.h"
 #include "SocketIO.h"
@@ -22,18 +22,17 @@ int main()
 {
 	string configPath="./Conf/Server.conf";
 	Configure* configure=Configure::getInstance(configPath);
-	string diction=configure->getPathFor("diction");
+	string dictionaryPath=configure->getPathFor("dictionaryPath"); 
 	string port=configure->getPathFor("port");
-	string num=configure->getPathFor("num");
+	string number=configure->getPathFor("number");
 
-	Dictionary* dictionary=Dictionary::getInstance(diction);
-
-	Correction* correction=Correction::getInstance(*dictionary);
-	Cache* cache=Cache::getInstance(*correction);
+	Dictionary* dictionary=Dictionary::getInstance(dictionaryPath);
+	Cache* cache=Cache::getInstance();
+	Task task=Task(*dictionary,*cache);
 
 	InetAddress inetAddress(atoi(port.c_str()));
 	Socket* socket=Socket::getInstance();
-	socket->get(inetAddress,atoi(num.c_str()));
+	socket->get(inetAddress,atoi(number.c_str()));
 
 	cout<<"Welcome!"<<endl;
 
@@ -45,7 +44,8 @@ int main()
 	while(true)
 	{
 		socketIO->readString(src);
-		dest=cache->find(src);
+		dest=cache->lookUp(src);
+		dest=task.lookUp(src);
 		socketIO->writeString(dest);
 	}
 

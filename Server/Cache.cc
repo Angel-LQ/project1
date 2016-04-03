@@ -1,36 +1,32 @@
 #include "Cache.h"
 #include "cstdlib"
-#include "Correction.h"
 #include "iostream"
 
 using std::cout;
 using std::endl;
 
-Cache* Cache::getInstance(Correction &correction)
+Cache* Cache::getInstance()
 {
 	if(!_cache)
-		_cache=new Cache(correction);
+		_cache=new Cache();
 	return _cache;
 }
 
-string Cache::find(const string &word)
+string Cache::lookUp(const string &word)
 {
 	auto it=_cache_map.find(word);
 	if(it==_cache_map.end())
-	{
-		string retword=_correction.recommend(word);
-		if(retword=="")
-			retword=word;
-		_cache_map.insert(pair<string,string>(word,retword));
-		_cache_map.insert(pair<string,string>(retword,retword));
-		return retword;
-	}
+		return "";
 	else
 		return it->second;
 }
 
-Cache::Cache(Correction &correction)
-:_correction(correction)
+void Cache::add(const pair<string,string> &words)
+{
+	_cache_map.insert(words);
+}
+
+Cache::Cache()
 {
 }
 
