@@ -1,8 +1,8 @@
 INC_DIR:= ../Include/
 SRC_DIR:= ./
 CC:=g++
-CPPFLAGS:= -std=c++11 -g
-LIBS:= -lpthread
+CPPFLAGS:= -std=c++11 -g -DOS_LINUX
+LIBS:= -lpthread -lNLPIR
 INC_FILE:= $(addprefix -I, $(INC_DIR))
 SRC_FILE:= $(wildcard ./*.cc )
 TARGET:=Server.exe

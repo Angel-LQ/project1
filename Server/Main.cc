@@ -19,6 +19,7 @@ using std::string;
 using std::function;
 using std::bind;
 using std::atoi;
+using std::ref;
 
 void onConnection(TcpConnectionPtr conn)
 {
@@ -26,11 +27,13 @@ void onConnection(TcpConnectionPtr conn)
 	conn->send("welcome to server.");
 }
 
-void onMessage(TcpConnectionPtr conn)
+void onMessages(TcpConnectionPtr conn,Task &task)
 {
-	string msg; 
-	conn->receive(msg);
-	conn->send(msg);
+	string src;
+	string dest; 
+	conn->receive(src);
+	dest=task.lookUp(src);
+	conn->send(dest);
 }
 
 void onClose(TcpConnectionPtr conn)
@@ -54,27 +57,15 @@ int main()
 	InetAddress inetAddress(atoi(port.c_str()));
 	Socket socket;
 	socket.get(inetAddress,atoi(number.c_str()));
-/*
-	int peerfd=socket.acceptFor();
-	TcpConnection tcpConnection(peerfd);
-*/
+
+	function<void(TcpConnectionPtr)> onMessage=bind(onMessages,std::placeholders::_1,task);
+
 	EpollPoller epollPoller(socket.fd());
 	epollPoller.setConnectionCallback(onConnection);
 	epollPoller.setMessageCallback(onMessage);
 	epollPoller.setCloseCallback(onClose);
 
 	epollPoller.loop();
-/*
-	cout<<"Welcome!"<<endl;
 
-	string src;
-	string dest;
-	while(true)
-	{
-		tcpConnection.receive(src);
-		dest=task.lookUp(src);
-		tcpConnection.send(dest);
-	}
-*/
 	return 0;
 }
