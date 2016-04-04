@@ -7,7 +7,7 @@ using std::string;
 
 int main()
 {
-	string configPath="./Conf/DictionaryMaker.conf";
+	string configPath="../Conf/DictionaryMaker.conf";
 	Configure* configure=Configure::getInstance(configPath);
 	string english=configure->getPathFor("english");
 	string chinese=configure->getPathFor("chinese");

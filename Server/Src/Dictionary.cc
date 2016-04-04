@@ -20,6 +20,52 @@ using std::ofstream;
 using std::pair;
 using std::priority_queue;
 using std::vector;
+using std::size_t;
+
+size_t nBytesCode(const char ch)
+{
+	size_t nBytes = 0;
+	if(ch &(1 << 7))
+	{
+		if((ch & 0xF0) == 0xC0 || (ch & 0xF0) == 0xD0)  
+		{												
+			nBytes += 2;							
+		}										
+		else if((ch & 0xF0) == 0xE0)
+		{
+			nBytes += 3;
+		}
+		else if((ch & 0xF0) == 0xF0)
+		{
+			nBytes += 4;
+		}
+		else if((ch & 0xFF) == 0xF8)
+		{
+			nBytes += 5;
+		}
+		else if((ch & 0xFF) == 0xFE)
+		{
+			nBytes += 6;
+		}
+	}
+	else
+	{
+		nBytes += 1;	
+	}
+	return nBytes;
+}
+
+size_t length(const string &str)
+{
+	size_t ilen = 0;
+	for(std::size_t idx = 0; idx != str.size(); ++idx)
+	{
+		int nBytes = nBytesCode(str[idx]);
+		idx += (nBytes - 1);
+		++ilen;
+	}
+	return ilen;
+}
 
 int MinimumEditDistance(const string &dest,const string &src)
 {

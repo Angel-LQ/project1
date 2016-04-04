@@ -44,7 +44,7 @@ void onClose(TcpConnectionPtr conn)
 int main()
 {
 	MutexLock mutexLock;
-	string configPath="./Conf/Server.conf";
+	string configPath="../Conf/Server.conf";
 	Configure* configure=Configure::getInstance(configPath,mutexLock);
 	string dictionaryPath=configure->getPathFor("dictionaryPath"); 
 	string port=configure->getPathFor("port");

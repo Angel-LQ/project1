@@ -5,7 +5,7 @@ CPPFLAGS:= -std=c++11 -g -DOS_LINUX
 LIBS:= -lNLPIR
 INC_FILE:= $(addprefix -I, $(INC_DIR))
 SRC_FILE:= $(wildcard ./*.cc )
-TARGET:=./DictionaryMaker.exe
+TARGET:=../Bin/DictionaryMaker.exe
 
 $(TARGET):$(SRC_FILE)
 	$(CC) -o $@ $^ $(CPPFLAGS) $(INC_FILE) $(LIBS)
