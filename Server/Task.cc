@@ -2,6 +2,20 @@
 #include "Dictionary.h"
 #include "Cache.h"
 
+string correction(string &word)
+{
+	for(int idx=0;idx<word.length();++idx)
+	{
+		if(!isalpha(word[idx]))
+		{	
+			word.clear();
+			return word;
+		}
+		word[idx]=tolower(word[idx]);
+	}
+	return word;
+}
+
 Task::Task(Dictionary &dictionary,Cache &cache)
 :_dictionary(dictionary)
 ,_cache(cache)
@@ -10,14 +24,16 @@ Task::Task(Dictionary &dictionary,Cache &cache)
 
 string Task::lookUp(const string &word)
 {
-	string result=_cache.lookUp(word);
+	string temp=word;
+	correction(temp);
+	string result=_cache.lookUp(temp);
 	if(result=="")
 	{
-		result=_dictionary.lookUp(word);
+		result=_dictionary.lookUp(temp);
 		if(result=="")
-			result=word;
-		_cache.add(pair<string,string>(word,result));
-		_cache.add(pair<string,string>(word,word));
+			result=temp;
+		_cache.add(pair<string,string>(temp,result));
+		_cache.add(pair<string,string>(temp,temp));
 	}
 	return result;
 }

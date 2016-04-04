@@ -14,6 +14,7 @@ int main()
 	string source5=configure->getPathFor("source5");
 	string source6=configure->getPathFor("source6");
 	string source7=configure->getPathFor("source7");
+	string source8=configure->getPathFor("source8");
 	string dictionary=configure->getPathFor("dictionary");
 
 	DictionaryMaker* dictionaryMaker=DictionaryMaker::getInstance();
@@ -23,7 +24,8 @@ int main()
 	dictionaryMaker->addSourceIFrom(source4);
 	dictionaryMaker->addSourceIFrom(source5);
 	dictionaryMaker->addSourceIFrom(source6);
-	dictionaryMaker->addSourceXFrom(source7);
+	dictionaryMaker->addSourceIFrom(source7);
+	dictionaryMaker->addSourceXFrom(source8);
 	dictionaryMaker->makeDictionary();
 	dictionaryMaker->putDictionaryTo(dictionary);
 

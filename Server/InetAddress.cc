@@ -33,12 +33,12 @@ struct sockaddr_in* InetAddress::getInetAddressPtr()
 	return  &_addr;
 }
 
-string InetAddress::ip()
+string InetAddress::ip() const
 {
 	return string(inet_ntoa(_addr.sin_addr));
 }
 
-unsigned short InetAddress::port()
+unsigned short InetAddress::port() const
 {
 	return ntohs(_addr.sin_port);
 }

@@ -11,23 +11,10 @@
 
 #define BUFFSIZE 1024
 
-SocketIO* SocketIO::getInstance(int fd)
-{
-	if(!_socketIO)
-		_socketIO=new SocketIO(fd);
-	return _socketIO;
-}
-
 SocketIO::SocketIO(int fd)
 :_fd(fd)
 {
 }
-
-SocketIO::~SocketIO()
-{
-}
-
-SocketIO* SocketIO::_socketIO=NULL;
 
 ssize_t SocketIO::readn(char* buff,size_t count)
 {
@@ -76,16 +63,6 @@ ssize_t SocketIO::writen(char* buff,size_t count)
 	}
 	return count-remain;
 } 
-
-ssize_t SocketIO::readPeek(char* buff,size_t count)
-{
-	ssize_t nread;
-	do
-	{
-		nread=recv(_fd,buff,count,MSG_PEEK);
-	}while(nread==-1 && errno==EINTR);
-	return nread;
-}
 
 ssize_t SocketIO::readLine(char* buff,size_t max)
 {
@@ -158,10 +135,12 @@ void SocketIO::writeString(const string &word)
 	writen(buff,BUFFSIZE);
 }
 
-SocketIO::Garbo::~Garbo()
+ssize_t SocketIO::readPeek(char* buff,size_t count)
 {
-	if(_socketIO)
-		delete _socketIO;
+	ssize_t nread;
+	do
+	{
+		nread=recv(_fd,buff,count,MSG_PEEK);
+	}while(nread==-1 && errno==EINTR);
+	return nread;
 }
-
-SocketIO::Garbo SocketIO::_garbo;

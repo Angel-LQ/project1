@@ -28,9 +28,12 @@ int main()
 
 //	Epoll* epoll=Epoll::getInstance(fd,*socketIO);
 
-	cout<<"Welcome!"<<endl;
+	
 
 	string src,dest;
+	
+	socketIO->readString(dest);
+	cout<<dest<<endl;
 	while(true)
 	{
 

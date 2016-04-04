@@ -8,21 +8,27 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 
-Socket* Socket::getInstance()
+int createSocketFd()
 {
-	if(!_socket)
-		_socket=new Socket();
-	return _socket;
-}
-
-Socket::Socket()
-{
-	_fd=socket(AF_INET,SOCK_STREAM,0);
-	if(-1==_fd)
+	int fd=socket(AF_INET,SOCK_STREAM,0);
+	if(-1==fd)
 	{
 		perror("socket()");
 	}
+	return fd;
+}
+
+Socket::Socket()
+:_fd(createSocketFd())
+{
+}
+
+Socket::Socket(int fd)
+:_fd(fd)
+{
 }
 
 Socket::~Socket()
@@ -30,12 +36,51 @@ Socket::~Socket()
 	close(_fd);
 }
 
-Socket* Socket::_socket=NULL;
+int Socket::fd()
+{
+	return _fd;
+}
+
+void Socket::shutdownWrite()
+{
+	int ret=shutdown(_fd,SHUT_WR);
+	if(-1==ret)
+	{
+		perror("shutdown()");
+		exit(-1);
+	}
+}
+
+InetAddress Socket::getLocalAddr(int fd)
+{
+	struct sockaddr_in addr;
+	socklen_t len=sizeof(struct sockaddr_in);
+	int ret=getsockname(fd,(struct sockaddr*)&addr,&len);
+	if(-1==ret)
+	{
+		perror("getsockname()");
+	}
+	return InetAddress(addr);
+}
+
+InetAddress Socket::getPeerAddr(int fd)
+{
+	struct sockaddr_in addr;
+	socklen_t len=sizeof(struct sockaddr_in);
+	int ret=getpeername(fd,(struct sockaddr*)&addr,&len);
+	if(-1==ret)
+	{
+		perror("getpeername()");
+	}
+	return InetAddress(addr);
+}
 
 void Socket::get(InetAddress & addr,int num)
 {
 	setReuseAddrIs(true);
 	setReusePortIs(true);
+	setTcpNoDelayIs(true);
+	setKeepAliveIs(true);
 	bindWith(addr);
 	listenTo(num);
 }
@@ -49,23 +94,14 @@ int Socket::acceptFor()
 	}
 	return peerfd;
 }
-void Socket::bindWith(InetAddress & addr)
-{
-	int ret=bind(_fd,(struct sockaddr*)(addr.getInetAddressPtr()),sizeof(struct sockaddr));
-	if(-1==ret)
-	{
-		perror("bind()");
-		close(_fd);
-		exit(-1);
-	}
-}
 
-void Socket::listenTo(int num)
+void Socket::setTcpNoDelayIs(bool flag)
 {
-	int ret=listen(_fd,num);
+	int on=flag?1:0;
+	int ret=setsockopt(_fd,IPPROTO_TCP,TCP_NODELAY,&on,static_cast<socklen_t>(sizeof(on)));
 	if(-1==ret)
 	{
-		perror("listen()");
+		perror("setsockopt(tcpnodelay)");
 		close(_fd);
 		exit(-1);
 	}
@@ -95,10 +131,36 @@ void Socket::setReusePortIs(bool flag)
 	}
 }
 
-Socket::Garbo::~Garbo()
+void Socket::setKeepAliveIs(bool flag)
 {
-	if(_socket)
-		delete _socket;
+	int on=flag?1:0;
+	int ret=setsockopt(_fd,SOL_SOCKET,SO_KEEPALIVE,&on,static_cast<socklen_t>(sizeof(on)));
+	if(-1==ret)
+	{
+		perror("setsockopt(keepalive)");
+		close(_fd);
+		exit(-1);
+	}
 }
 
-Socket::Garbo Socket::_garbo;
+void Socket::bindWith(InetAddress & addr)
+{
+	int ret=bind(_fd,(struct sockaddr*)(addr.getInetAddressPtr()),sizeof(struct sockaddr));
+	if(-1==ret)
+	{
+		perror("bind()");
+		close(_fd);
+		exit(-1);
+	}
+}
+
+void Socket::listenTo(int num)
+{
+	int ret=listen(_fd,num);
+	if(-1==ret)
+	{
+		perror("listen()");
+		close(_fd);
+		exit(-1);
+	}
+}

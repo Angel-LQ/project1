@@ -34,7 +34,11 @@ Socket* Socket::_socket=NULL;
 
 int Socket::connectTo(InetAddress &addr)
 {
-	connect(_fd,(struct sockaddr*)(addr.getInetAddressPtr()),sizeof(struct sockaddr));
+	int ret = connect(_fd,(struct sockaddr*)(addr.getInetAddressPtr()),sizeof(struct sockaddr));
+	if(-1 == ret)
+	{
+		perror("connect()");
+	}
 	return _fd;
 }
 

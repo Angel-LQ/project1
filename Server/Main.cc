@@ -5,7 +5,8 @@
 #include "Task.h"
 #include "InetAddress.h"
 #include "Socket.h"
-#include "SocketIO.h"
+#include "TcpConnection.h"
+#include "EpollPoller.h"
 #include <cstring>
 #include <unistd.h>
 #include <cstring>
@@ -18,6 +19,24 @@ using std::string;
 using std::function;
 using std::bind;
 using std::atoi;
+
+void onConnection(TcpConnectionPtr conn)
+{
+	cout<<conn->connectionMsg()<<"has connected!"<<endl;
+	conn->send("welcome to server.");
+}
+
+void onMessage(TcpConnectionPtr conn)
+{
+	string msg; 
+	conn->receive(msg);
+	conn->send(msg);
+}
+
+void onClose(TcpConnectionPtr conn)
+{
+	cout<<conn->connectionMsg()<<"has close."<<endl;
+}
 
 int main()
 {
@@ -33,23 +52,29 @@ int main()
 	Task task=Task(*dictionary,*cache);
 
 	InetAddress inetAddress(atoi(port.c_str()));
-	Socket* socket=Socket::getInstance();
-	socket->get(inetAddress,atoi(number.c_str()));
+	Socket socket;
+	socket.get(inetAddress,atoi(number.c_str()));
+/*
+	int peerfd=socket.acceptFor();
+	TcpConnection tcpConnection(peerfd);
+*/
+	EpollPoller epollPoller(socket.fd());
+	epollPoller.setConnectionCallback(onConnection);
+	epollPoller.setMessageCallback(onMessage);
+	epollPoller.setCloseCallback(onClose);
 
+	epollPoller.loop();
+/*
 	cout<<"Welcome!"<<endl;
-
-	int fd=socket->acceptFor();
-	SocketIO* socketIO=SocketIO::getInstance(fd);
 
 	string src;
 	string dest;
 	while(true)
 	{
-		socketIO->readString(src);
-		dest=cache->lookUp(src);
+		tcpConnection.receive(src);
 		dest=task.lookUp(src);
-		socketIO->writeString(dest);
+		tcpConnection.send(dest);
 	}
-
+*/
 	return 0;
 }
